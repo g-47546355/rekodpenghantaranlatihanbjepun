@@ -194,6 +194,7 @@
                 <div class="glass-card p-4 flex flex-col justify-center items-center gap-2">
                     <button id="btnBackup" class="w-full text-[9px] font-orbitron p-2 border border-cyan-500 rounded text-cyan-500 hover:bg-cyan-500 hover:text-white transition-all">BACKUP DATA (JSON)</button>
                     <button id="btnRestore" class="w-full text-[9px] font-orbitron p-2 border border-pink-500 rounded text-pink-500 hover:bg-pink-500 hover:text-white transition-all">RESTORE DATA</button>
+                    <button id="btnResetAll" class="w-full text-[9px] font-orbitron p-2 border border-red-500 rounded text-red-500 hover:bg-red-500 hover:text-white transition-all">PADAM SEMUA DATA</button>
                     <input type="file" id="restoreFile" class="hidden" accept=".json">
                 </div>
             </div>
@@ -219,7 +220,7 @@
     <script>
         // DATA PELAJAR
         const STUDENTS = {
-            "1 ALPHA": ["ABHISHEK (AHMAD ALI)", "AMILY FARHAIMANINA AIMAN BINTI RUSHFUZI FAZALI", "AMIRAH SUFIYYAH BINTI SAIFUL LIZAN", "ANIQ FATIH BIN FAIZ", "AREEQ FIRASH BIN AZARE", "ARIANA SYAAFIYAH BINTI MOHD AZLISHAH", "CECILLIA MEGANN A/P MANIVEL", "DARYN ALYSHA BINTI AZRUL EFFENDY", "DOLINA SIGA KRISHNAN", "FATIN AMNA ALEEFAH BINTI MOHD ALFOUZII", "FAYYIZ HARRIZ BIN MOHD FITRI HAKIM", "HANA HUMAIRA BINTI ARMAN", "HANITHRA A/P TARMENDRAN", "HANNAH NURADELIA BINTI MOHD HAFFIZZI", "HARIS HAYY BIN MOHAMAD JUMAIRI", "HARITH BIN HAZRIL", "ISQANDAR ZULKARNAIN GOSTELOW BIN MUHAMMAD HARITH GOSTELOW", "JOANNA A/P NYANAPRAGASAM", "LUTH ISKANDAR BIN MUHAMMAD IKRAM", "MOHAMAD AREEF AZEEM BIN MOHAMMAD HAIREEN", "MUHAMAD DANISH HAIKAL BIN MOHD NIZAL", "MUHAMMAD FATEH BIN MD FAHMI", "MUHAMMAD HAZIM BIN MOHD HAZMEL", "MUHAMMAD RIZQI BIN FADZIL", "MUHAMMAD YUSUF BIN ABDUL MALEK", "NIK SYAHIRAN ARIF BIN NIK AB HALIM", "NUR AISYAH SUFFIYAH BINTI MOHD HASRYIZUAN", "NUR ARISSA BINTI ABDUL HALIM", "NUR KHAYLA BATRISYA BINTI KHAIRIL ANWAR", "NUR SHAFWATUL BADLEEYA BINTI MOHD HAIRUL SHAH", "PRIYAA THARSHINI A/P VEEJAYKUMAR", "QASEH AUWNI BINTI MOHAMAD YUSRI", "QASEH UMAIRAH ZAHIDAH BINTI ABDULLA SHAIED", "RIKA AQILAH BINTI MOHD SYAWALUDIN", "TANUSHA A/P KISHOREKKUMAR", "UMAYR HAQUE BIN SHAMSUL FAKHAR", "ZAFIRAH AISYAH BINTI MOHAMMAD FADHIL", "ZAFRUL AQIL MUEEZ BIN KARIM"],
+            "1 ALPHA": ["ABHISHEK (AHMAD ALI)", "AMILY FARHAIMANINA AIMAN BINTI RUSHFUZI FAZALI", "AMIRAH SUFIYYAH BINTI SAIFUL LIZAN", "ANIQ FATIH BIN FAIZ", "AREEQ FIRASH BIN AZARE", "ARIANA SYAAFIYAH BINTI MOHD AZLISHAH", "CECILLIA MEGANN A/P MANIVEL", "DARYN ALYSHA BINTI AZRUL EFFENDY", "DOLINA SIGA KRISHNAN", "FATIN AMNA ALEEFAH BINTI MOHD ALFOUZII", "FAYYIZ HARRIZ BIN MOHD FITRI HAKIM", "HANA HUMAIRA BINTI ARMAN", "HANITHRA A/P TARMENDRAN", "HANNAH NURADELIA BINTI MOHD HAFFIZZI", "HARIS HAYY BIN MOHAMAD JUMAIRI", "HARITH BIN HAZRIL", "ISQANDAR ZULKARNAIN GOSTELOW BIN MUHAMMAD HARITH GOSTELOW", "JOANNA A/P NYANAPRAGASAM", "LUTH ISKANDAR BIN MUHAMMAD IKRAM", "MOHAMAD AREEF AZEEM BIN MOHAMMAD HAIREEN", "MUHAMAD DANISH HAIKAL BIN MOHD NIZAL", "MUHAMADA FATEH BIN MD FAHMI", "MUHAMMAD HAZIM BIN MOHD HAZMEL", "MUHAMMAD RIZQI BIN FADZIL", "MUHAMMAD YUSUF BIN ABDUL MALEK", "NIK SYAHIRAN ARIF BIN NIK AB HALIM", "NUR AISYAH SUFFIYAH BINTI MOHD HASRYIZUAN", "NUR ARISSA BINTI ABDUL HALIM", "NUR KHAYLA BATRISYA BINTI KHAIRIL ANWAR", "NUR SHAFWATUL BADLEEYA BINTI MOHD HAIRUL SHAH", "PRIYAA THARSHINI A/P VEEJAYKUMAR", "QASEH AUWNI BINTI MOHAMAD YUSRI", "QASEH UMAIRAH ZAHIDAH BINTI ABDULLA SHAIED", "RIKA AQILAH BINTI MOHD SYAWALUDIN", "TANUSHA A/P KISHOREKKUMAR", "UMAYR HAQUE BIN SHAMSUL FAKHAR", "ZAFIRAH AISYAH BINTI MOHAMMAD FADHIL", "ZAFRUL AQIL MUEEZ BIN KARIM"],
             "2 ALPHA": ["ADAM FIRHAN BIN MOHD ALI", "ADAM MIKHAIL BIN MOHD SYAHIDAN", "AHMAD HAIDHAR BIN ABDUL ASHRAFF", "AMAN RIZZQIN BIN AMAN ZAKI", "DANIAL BIN HOMUD", "EMIR ILYAS MALIQ BIN ANWAR FIRDAUS", "JANE ANAK MOS", "LUQMAN AL-HAKIM BIN MOHD FIRDAUS", "MUHAMMAD ALIF MUKHRIS BIN ISMADI", "MUHAMMAD AQIL ASYRAF BIN ABDUL QAWI", "MUHAMMAD FARHAN BIN SHAHZARUL FAZRIL", "MUHAMMAD IMRAN SYAHID BIN MOHD HAFIZ", "MUHAMMAD RIZQI ZAFRAN BIN MUHAMMAD HAFIZ", "MUHAMMAD UMAR HAFIY BIN NOREMI", "NAURAH AMANI ALISYA BINTI IBRAHIM", "NIK KEISYA ZAINA BINTI NIK MOHD ZARIFIE", "NIK KHAYLA ZENIA BINTI NIK MOHD ZARIFIE", "NITTESHWARAN A/L ELANGOVAN", "NUR AISYAH BINTI AHMAD RAIEDZALL", "NUR ALIA AMIRA BINTI MOHD SYARIPUDIN", "NUR ATIA HANA BINTI HISHAMUDIN", "NUR'AISY BINTI ISHAK", "QAISAH ANASOFIA BINTI MOHD HAZMEL", "RAISHA ZARA AFRINA BINTI ABDUL RAHMAN", "RUMAISHA AZ- ZAHRA BINTI AL AMIN", "SETH IMAN BIN MOHAMAD HAZIMIN", "SKH MOHAMMAD ASYRAF AZRIEL BIN SKH MOHAMMED TAUFIQ"],
             "3 ALPHA": ["ADDEENA DANIA BINTI YUSPIKARL", "ADEENA SARAH BINTI AFZNIZAM", "ADZRA WADHIHAH BINTI KAMARUL MUSTAKIM", "AHMAD FAIEZUDDIN BIN AHMAD SOPHIEN", "AIRIS NUR DAMIA BINTI MUHAMMAD ZAKI", "AL JUFRIE NOOR BIN JATIE NOOR", "ALISYA HANA BINTI MUHAMMAD HAFEZ", "ANAKHARAJ / FATHIMA BINTI MUHAMMAD MUSTHAFA", "ARFA NURBAITI BINTI MOHAMMAD HALIMI", "ARISSYA DAMIA BINTI KHAIROL TAJALDIN", "ILLAMATHI A/P JEYAKUMAR", "JANANI A/P KOGELAN", "KHESHEV A/L VASUDEVAN", "MARYAM BINTI MUHAMMAD NAJIB", "MIA ZAHIRAH BINTI MANSUR", "MUHAMMAD DANISH ASYRAAF BIN MD ZAKI", "MUHAMMAD IQBAL BIN ISMAEL", "MUHAMMAD QADRI AZLAN SHAH BIN ABDUL QUDDUS", "MUHAMMAD THAHIRU ABDULKABIR", "NIK ALYA BINTI NIK MOHD FARID", "NUR ADRYANNA MARISSA BINTI SAHIBANNY", "NUR IRDINA QAISARA BINTI SHAMSUL FAKHAR", "NUR KHALISYA SOFIA BINTI KHAIRIL ANWAR", "TANUSHA A/P S SHANMUGAMNATHAN", "NURUL NAJAH BINTI RAZMAN", "QASEH ERYNA BINTI ZULZAMRI", "QISYA SHAALIHAH BINTI ROZLI AZIZI", "RAYYAN LAI MING HAO BIN IDHAM LAI", "SAFIYYAH NUR BINTI MOHD RADHI", "SITI NURAISYAH FATEHAH BINTI MD SHARI", "SOFIA AQILAH BINTI MOHAMMAD FADHIL", "SUFI BATRISYA BINTI MOHD RIDZWAN"]
         };
@@ -306,7 +307,7 @@
             let recordedDays = 0;
 
             allDates.forEach(date => {
-                if (masterData[date][selectedClass]) {
+                if (masterData[date] && masterData[date][selectedClass]) {
                     recordedDays++;
                     const subs = masterData[date][selectedClass];
                     Object.values(subs).forEach(v => {
@@ -432,6 +433,20 @@
         document.getElementById('btnBackup').onclick = exportBackup;
         document.getElementById('btnRestore').onclick = () => document.getElementById('restoreFile').click();
         
+        document.getElementById('btnResetAll').onclick = () => {
+            const confirm1 = confirm("⚠️ AMARAN KRITIKAL: Tindakan ini akan memadam SEMUA rekod murid bagi semua kelas dan tarikh secara kekal dari peranti ini. Teruskan?");
+            if (confirm1) {
+                const confirm2 = confirm("PENGESAHAN TERAKHIR: Adakah anda benar-benar pasti mahu memadam semua data?");
+                if (confirm2) {
+                    masterData = {};
+                    localStorage.removeItem(STORAGE_KEY);
+                    showToast("Semua rekod telah dipadamkan 🗑️", "pink");
+                    renderStudentList();
+                    computeAdminStats();
+                }
+            }
+        };
+
         document.getElementById('restoreFile').onchange = (e) => {
             const file = e.target.files[0];
             if (!file) return;
@@ -439,11 +454,14 @@
             reader.onload = (event) => {
                 try {
                     const restored = JSON.parse(event.target.result);
-                    if(confirm("Data baru akan digabungkan. Teruskan?")) {
+                    if(confirm("Data baru akan digabungkan dengan rekod sedia ada. Teruskan?")) {
                         masterData = { ...masterData, ...restored };
                         localStorage.setItem(STORAGE_KEY, JSON.stringify(masterData));
                         showToast("Data Berjaya Digabungkan!", "cyan");
                         renderStudentList();
+                        if (!document.getElementById('adminMode').classList.contains('hidden')) {
+                            computeAdminStats();
+                        }
                     }
                 } catch (err) { alert("Fail tidak sah!"); }
             };
