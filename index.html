@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WorkTrackX - SMK Ayer Keroh</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --neon-cyan: #00f2ff;
+            --neon-pink: #ff007f;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --bg-dark: #0a0b1e;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(0, 242, 255, 0.1) 0, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(255, 0, 127, 0.1) 0, transparent 50%);
+            color: #e0e0e0;
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .font-orbitron { font-family: 'Orbitron', sans-serif; }
+
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .neon-border-cyan {
+            border: 1px solid var(--neon-cyan);
+            box-shadow: 0 0 10px rgba(0, 242, 255, 0.3);
+        }
+
+        .neon-border-pink {
+            border: 1px solid var(--neon-pink);
+            box-shadow: 0 0 10px rgba(255, 0, 127, 0.3);
+        }
+
+        .btn-neon-cyan {
+            background: transparent;
+            border: 2px solid var(--neon-cyan);
+            color: var(--neon-cyan);
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-neon-cyan:hover {
+            background: var(--neon-cyan);
+            color: var(--bg-dark);
+            box-shadow: 0 0 20px var(--neon-cyan);
+        }
+
+        .custom-checkbox {
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--neon-cyan);
+            border-radius: 4px;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s;
+        }
+
+        .custom-checkbox:checked { background: var(--neon-cyan); }
+        .custom-checkbox:checked::after {
+            content: '✓';
+            position: absolute;
+            color: var(--bg-dark);
+            font-weight: bold;
+            left: 50%; top: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .glow-text { text-shadow: 0 0 10px var(--neon-cyan); }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-fade { animation: fadeIn 0.5s ease forwards; }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 12px 24px;
+            border-radius: 8px;
+            display: none;
+            z-index: 3000;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="toast" class="toast glass-card neon-border-cyan glow-text font-orbitron text-xs"></div>
+
+    <header class="p-6 glass-card m-4 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div class="text-center md:text-left">
+            <h1 class="font-orbitron text-xl md:text-2xl text-cyan-400 glow-text tracking-tighter">
+                練習帳提出記録表 – 日本語
+            </h1>
+            <p class="text-xs md:text-sm text-pink-400 font-orbitron uppercase tracking-widest opacity-80">
+                SMK AYER KEROH | WorkTrackX
+            </p>
+        </div>
+        <button id="adminBtn" class="p-3 rounded-full glass-card neon-border-pink hover:scale-110 transition-transform">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-pink-400"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </button>
+    </header>
+
+    <main class="max-w-6xl mx-auto p-4 mb-20">
+        <!-- MOD GURU -->
+        <section id="guruMode" class="animate-fade">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="glass-card p-4">
+                    <label class="block text-[10px] font-orbitron mb-2 text-cyan-400">PILIH KELAS</label>
+                    <select id="classSelect" class="w-full bg-slate-800 border-b-2 border-cyan-500 p-2 rounded text-sm focus:outline-none text-white">
+                        <option value="">-- Sila Pilih --</option>
+                        <option value="1 ALPHA">1 ALPHA</option>
+                        <option value="2 ALPHA">2 ALPHA</option>
+                        <option value="3 ALPHA">3 ALPHA</option>
+                    </select>
+                </div>
+                <div class="glass-card p-4">
+                    <label class="block text-[10px] font-orbitron mb-2 text-pink-400">TARIKH REKOD</label>
+                    <input type="date" id="datePicker" class="w-full bg-slate-800 border-b-2 border-pink-500 p-2 rounded text-sm focus:outline-none text-white">
+                </div>
+                <div class="glass-card p-4 flex flex-col justify-center items-center">
+                    <div class="text-3xl font-orbitron text-cyan-400" id="percentCounter">0%</div>
+                    <div class="text-[10px] uppercase opacity-60">Kadar Penghantaran</div>
+                </div>
+            </div>
+
+            <div id="studentListContainer" class="glass-card p-6 min-h-[400px]">
+                <div id="emptyState" class="text-center py-20 opacity-50 italic text-xs">
+                    Sila pilih kelas untuk memulakan sesi rakaman...
+                </div>
+                <div id="studentList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 hidden"></div>
+            </div>
+
+            <div class="mt-8 flex flex-wrap gap-4 justify-center md:justify-end">
+                <button id="btnReset" class="px-6 py-3 rounded glass-card text-[10px] font-orbitron hover:bg-white/10">RESET TICK</button>
+                <button id="btnExport" class="px-6 py-3 rounded glass-card text-[10px] font-orbitron hover:bg-white/10">EXPORT CSV</button>
+                <button id="btnSave" class="btn-neon-cyan px-8 py-3 rounded font-orbitron text-xs">SIMPAN REKOD</button>
+            </div>
+            <div id="statusLabel" class="text-center mt-4 text-[10px] opacity-40 font-orbitron italic">Sistem Penyimpanan Tempatan Aktif (Offline Ready)</div>
+        </section>
+
+        <!-- MOD ADMIN -->
+        <section id="adminMode" class="animate-fade hidden">
+            <div class="flex items-center justify-between mb-8">
+                <h2 class="font-orbitron text-xl text-pink-400 glow-text">ADMIN DASHBOARD</h2>
+                <button id="backToGuru" class="text-[10px] underline opacity-70 font-orbitron hover:text-white">KEMBALI</button>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+                <div class="glass-card p-4">
+                    <label class="block text-[10px] font-orbitron mb-2 text-pink-400 uppercase">Analisis Kelas</label>
+                    <select id="adminClassSelect" class="w-full bg-slate-800 border-b border-pink-500 p-2 rounded text-xs text-white outline-none">
+                        <option value="1 ALPHA">1 ALPHA</option>
+                        <option value="2 ALPHA">2 ALPHA</option>
+                        <option value="3 ALPHA">3 ALPHA</option>
+                    </select>
+                </div>
+                <div class="glass-card p-6 border-l-4 border-cyan-500">
+                    <div id="statAvg" class="text-2xl font-orbitron text-cyan-400">0%</div>
+                    <div class="text-[10px] uppercase opacity-60">Purata Penghantaran</div>
+                </div>
+                <div class="glass-card p-6 border-l-4 border-pink-500">
+                    <div id="statTotal" class="text-2xl font-orbitron text-pink-400">0</div>
+                    <div class="text-[10px] uppercase opacity-60">Jumlah Hari Direkod</div>
+                </div>
+                <!-- Data Management for Offline -->
+                <div class="glass-card p-4 flex flex-col justify-center items-center gap-2">
+                    <button id="btnBackup" class="w-full text-[9px] font-orbitron p-2 border border-cyan-500 rounded text-cyan-500 hover:bg-cyan-500 hover:text-white transition-all">BACKUP DATA (JSON)</button>
+                    <button id="btnRestore" class="w-full text-[9px] font-orbitron p-2 border border-pink-500 rounded text-pink-500 hover:bg-pink-500 hover:text-white transition-all">RESTORE DATA</button>
+                    <input type="file" id="restoreFile" class="hidden" accept=".json">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-20">
+                <div class="glass-card p-6 h-80"><canvas id="pieChart"></canvas></div>
+                <div class="glass-card p-6 h-80"><canvas id="barChart"></canvas></div>
+            </div>
+        </section>
+    </main>
+
+    <div id="loginModal" class="fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center hidden z-[2000] p-4">
+        <div class="glass-card p-8 w-full max-w-sm neon-border-pink">
+            <h2 class="font-orbitron text-pink-400 mb-6 text-center text-sm">PENGESAHAN ADMIN</h2>
+            <input type="password" id="adminPass" placeholder="PASSWORD" class="w-full bg-slate-900 border border-pink-500/50 p-4 rounded font-mono text-center tracking-widest outline-none mb-4 text-white">
+            <div class="flex gap-2">
+                <button id="closeModal" class="flex-1 p-3 text-[10px] font-orbitron opacity-50">BATAL</button>
+                <button id="confirmLogin" class="flex-[2] btn-neon-pink p-3 font-orbitron text-[10px] border border-pink-500 text-pink-500 hover:bg-pink-500 hover:text-white transition-all">MASUK</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DATA PELAJAR
+        const STUDENTS = {
+            "1 ALPHA": ["ABHISHEK (AHMAD ALI)", "AMILY FARHAIMANINA AIMAN BINTI RUSHFUZI FAZALI", "AMIRAH SUFIYYAH BINTI SAIFUL LIZAN", "ANIQ FATIH BIN FAIZ", "AREEQ FIRASH BIN AZARE", "ARIANA SYAAFIYAH BINTI MOHD AZLISHAH", "CECILLIA MEGANN A/P MANIVEL", "DARYN ALYSHA BINTI AZRUL EFFENDY", "DOLINA SIGA KRISHNAN", "FATIN AMNA ALEEFAH BINTI MOHD ALFOUZII", "FAYYIZ HARRIZ BIN MOHD FITRI HAKIM", "HANA HUMAIRA BINTI ARMAN", "HANITHRA A/P TARMENDRAN", "HANNAH NURADELIA BINTI MOHD HAFFIZZI", "HARIS HAYY BIN MOHAMAD JUMAIRI", "HARITH BIN HAZRIL", "ISQANDAR ZULKARNAIN GOSTELOW BIN MUHAMMAD HARITH GOSTELOW", "JOANNA A/P NYANAPRAGASAM", "LUTH ISKANDAR BIN MUHAMMAD IKRAM", "MOHAMAD AREEF AZEEM BIN MOHAMMAD HAIREEN", "MUHAMAD DANISH HAIKAL BIN MOHD NIZAL", "MUHAMMAD FATEH BIN MD FAHMI", "MUHAMMAD HAZIM BIN MOHD HAZMEL", "MUHAMMAD RIZQI BIN FADZIL", "MUHAMMAD YUSUF BIN ABDUL MALEK", "NIK SYAHIRAN ARIF BIN NIK AB HALIM", "NUR AISYAH SUFFIYAH BINTI MOHD HASRYIZUAN", "NUR ARISSA BINTI ABDUL HALIM", "NUR KHAYLA BATRISYA BINTI KHAIRIL ANWAR", "NUR SHAFWATUL BADLEEYA BINTI MOHD HAIRUL SHAH", "PRIYAA THARSHINI A/P VEEJAYKUMAR", "QASEH AUWNI BINTI MOHAMAD YUSRI", "QASEH UMAIRAH ZAHIDAH BINTI ABDULLA SHAIED", "RIKA AQILAH BINTI MOHD SYAWALUDIN", "TANUSHA A/P KISHOREKKUMAR", "UMAYR HAQUE BIN SHAMSUL FAKHAR", "ZAFIRAH AISYAH BINTI MOHAMMAD FADHIL", "ZAFRUL AQIL MUEEZ BIN KARIM"],
+            "2 ALPHA": ["ADAM FIRHAN BIN MOHD ALI", "ADAM MIKHAIL BIN MOHD SYAHIDAN", "AHMAD HAIDHAR BIN ABDUL ASHRAFF", "AMAN RIZZQIN BIN AMAN ZAKI", "DANIAL BIN HOMUD", "EMIR ILYAS MALIQ BIN ANWAR FIRDAUS", "JANE ANAK MOS", "LUQMAN AL-HAKIM BIN MOHD FIRDAUS", "MUHAMMAD ALIF MUKHRIS BIN ISMADI", "MUHAMMAD AQIL ASYRAF BIN ABDUL QAWI", "MUHAMMAD FARHAN BIN SHAHZARUL FAZRIL", "MUHAMMAD IMRAN SYAHID BIN MOHD HAFIZ", "MUHAMMAD RIZQI ZAFRAN BIN MUHAMMAD HAFIZ", "MUHAMMAD UMAR HAFIY BIN NOREMI", "NAURAH AMANI ALISYA BINTI IBRAHIM", "NIK KEISYA ZAINA BINTI NIK MOHD ZARIFIE", "NIK KHAYLA ZENIA BINTI NIK MOHD ZARIFIE", "NITTESHWARAN A/L ELANGOVAN", "NUR AISYAH BINTI AHMAD RAIEDZALL", "NUR ALIA AMIRA BINTI MOHD SYARIPUDIN", "NUR ATIA HANA BINTI HISHAMUDIN", "NUR'AISY BINTI ISHAK", "QAISAH ANASOFIA BINTI MOHD HAZMEL", "RAISHA ZARA AFRINA BINTI ABDUL RAHMAN", "RUMAISHA AZ- ZAHRA BINTI AL AMIN", "SETH IMAN BIN MOHAMAD HAZIMIN", "SKH MOHAMMAD ASYRAF AZRIEL BIN SKH MOHAMMED TAUFIQ"],
+            "3 ALPHA": ["ADDEENA DANIA BINTI YUSPIKARL", "ADEENA SARAH BINTI AFZNIZAM", "ADZRA WADHIHAH BINTI KAMARUL MUSTAKIM", "AHMAD FAIEZUDDIN BIN AHMAD SOPHIEN", "AIRIS NUR DAMIA BINTI MUHAMMAD ZAKI", "AL JUFRIE NOOR BIN JATIE NOOR", "ALISYA HANA BINTI MUHAMMAD HAFEZ", "ANAKHARAJ / FATHIMA BINTI MUHAMMAD MUSTHAFA", "ARFA NURBAITI BINTI MOHAMMAD HALIMI", "ARISSYA DAMIA BINTI KHAIROL TAJALDIN", "ILLAMATHI A/P JEYAKUMAR", "JANANI A/P KOGELAN", "KHESHEV A/L VASUDEVAN", "MARYAM BINTI MUHAMMAD NAJIB", "MIA ZAHIRAH BINTI MANSUR", "MUHAMMAD DANISH ASYRAAF BIN MD ZAKI", "MUHAMMAD IQBAL BIN ISMAEL", "MUHAMMAD QADRI AZLAN SHAH BIN ABDUL QUDDUS", "MUHAMMAD THAHIRU ABDULKABIR", "NIK ALYA BINTI NIK MOHD FARID", "NUR ADRYANNA MARISSA BINTI SAHIBANNY", "NUR IRDINA QAISARA BINTI SHAMSUL FAKHAR", "NUR KHALISYA SOFIA BINTI KHAIRIL ANWAR", "TANUSHA A/P S SHANMUGAMNATHAN", "NURUL NAJAH BINTI RAZMAN", "QASEH ERYNA BINTI ZULZAMRI", "QISYA SHAALIHAH BINTI ROZLI AZIZI", "RAYYAN LAI MING HAO BIN IDHAM LAI", "SAFIYYAH NUR BINTI MOHD RADHI", "SITI NURAISYAH FATEHAH BINTI MD SHARI", "SOFIA AQILAH BINTI MOHAMMAD FADHIL", "SUFI BATRISYA BINTI MOHD RIDZWAN"]
+        };
+
+        const STORAGE_KEY = "WorkTrackX_Data_SMKAK";
+        let masterData = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+        let myCharts = { pie: null, bar: null };
+
+        const showToast = (msg, color = 'cyan') => {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.style.display = 'block';
+            t.className = `toast glass-card neon-border-${color} glow-text font-orbitron animate-fade`;
+            setTimeout(() => t.style.display = 'none', 3000);
+        };
+
+        const renderStudentList = () => {
+            const cls = document.getElementById('classSelect').value;
+            const date = document.getElementById('datePicker').value;
+            const container = document.getElementById('studentList');
+            const empty = document.getElementById('emptyState');
+            
+            if (!cls) {
+                container.classList.add('hidden');
+                empty.classList.remove('hidden');
+                return;
+            }
+
+            empty.classList.add('hidden');
+            container.classList.remove('hidden');
+            container.innerHTML = '';
+
+            // Get existing records for this specific date and class
+            const records = (masterData[date] && masterData[date][cls]) ? masterData[date][cls] : {};
+
+            STUDENTS[cls].forEach((name, index) => {
+                const isChecked = records[name] === true;
+                const div = document.createElement('div');
+                div.className = 'flex items-center gap-4 p-3 glass-card hover:bg-white/5 transition-colors animate-fade';
+                div.style.animationDelay = `${index * 0.005}s`;
+                div.innerHTML = `
+                    <input type="checkbox" class="custom-checkbox student-check" data-name="${name}" ${isChecked ? 'checked' : ''}>
+                    <span class="text-[10px] uppercase leading-tight select-none cursor-pointer" onclick="this.previousElementSibling.click()">${name}</span>
+                `;
+                container.appendChild(div);
+            });
+
+            document.querySelectorAll('.student-check').forEach(cb => {
+                cb.onchange = updateCounter;
+            });
+            updateCounter();
+        };
+
+        const updateCounter = () => {
+            const total = document.querySelectorAll('.student-check').length;
+            const checked = document.querySelectorAll('.student-check:checked').length;
+            const pct = total === 0 ? 0 : Math.round((checked / total) * 100);
+            document.getElementById('percentCounter').textContent = pct + '%';
+        };
+
+        const saveData = () => {
+            const cls = document.getElementById('classSelect').value;
+            const date = document.getElementById('datePicker').value;
+            if(!cls) return showToast("Sila pilih kelas!", "pink");
+
+            const submissions = {};
+            document.querySelectorAll('.student-check').forEach(cb => {
+                submissions[cb.dataset.name] = cb.checked;
+            });
+
+            if (!masterData[date]) masterData[date] = {};
+            masterData[date][cls] = submissions;
+
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(masterData));
+            showToast("Rekod Disimpan di Pelayar ✅", "cyan");
+        };
+
+        const computeAdminStats = () => {
+            const selectedClass = document.getElementById('adminClassSelect').value;
+            const allDates = Object.keys(masterData);
+            
+            let totalHantar = 0;
+            let totalPossible = 0;
+            let recordedDays = 0;
+
+            allDates.forEach(date => {
+                if (masterData[date][selectedClass]) {
+                    recordedDays++;
+                    const subs = masterData[date][selectedClass];
+                    Object.values(subs).forEach(v => {
+                        if (v === true) totalHantar++;
+                        totalPossible++;
+                    });
+                }
+            });
+
+            const avg = totalPossible === 0 ? 0 : Math.round((totalHantar / totalPossible) * 100);
+            document.getElementById('statAvg').textContent = avg + '%';
+            document.getElementById('statTotal').textContent = recordedDays;
+
+            updateCharts(totalHantar, totalPossible - totalHantar);
+        };
+
+        const updateCharts = (h, nh) => {
+            const pieCtx = document.getElementById('pieChart').getContext('2d');
+            if(myCharts.pie) myCharts.pie.destroy();
+            myCharts.pie = new Chart(pieCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Hantar', 'Tidak'],
+                    datasets: [{
+                        data: [h, nh],
+                        backgroundColor: ['#00f2ff', '#ff007f'],
+                        borderColor: '#0a0b1e',
+                        borderWidth: 2
+                    }]
+                },
+                options: { maintainAspectRatio: false, plugins: { legend: { labels: { color: '#fff', font: { family: 'Orbitron', size: 10 } } } } }
+            });
+
+            // Bar Chart - Performance by Class
+            const classPerf = {};
+            Object.values(masterData).forEach(day => {
+                Object.keys(day).forEach(cls => {
+                    if(!classPerf[cls]) classPerf[cls] = {h:0, t:0};
+                    const vals = Object.values(day[cls]);
+                    classPerf[cls].h += vals.filter(x => x===true).length;
+                    classPerf[cls].t += vals.length;
+                });
+            });
+
+            const barCtx = document.getElementById('barChart').getContext('2d');
+            if(myCharts.bar) myCharts.bar.destroy();
+            myCharts.bar = new Chart(barCtx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(classPerf),
+                    datasets: [{
+                        label: '% Capaian',
+                        data: Object.values(classPerf).map(v => Math.round((v.h / v.t) * 100)),
+                        backgroundColor: '#00f2ff'
+                    }]
+                },
+                options: { 
+                    maintainAspectRatio: false, 
+                    scales: { y: { beginAtZero: true, max: 100, ticks: { color: '#fff' } }, x: { ticks: { color: '#fff' } } },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        };
+
+        const exportBackup = () => {
+            const dataStr = JSON.stringify(masterData, null, 2);
+            const blob = new Blob([dataStr], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `WorkTrackX_Backup_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+        };
+
+        // UI Initialization
+        document.getElementById('datePicker').value = new Date().toISOString().split('T')[0];
+        
+        document.getElementById('classSelect').onchange = renderStudentList;
+        document.getElementById('datePicker').onchange = renderStudentList;
+        document.getElementById('btnSave').onclick = saveData;
+        
+        document.getElementById('btnReset').onclick = () => {
+            if(confirm("Kosongkan semua tandaan?")) {
+                document.querySelectorAll('.student-check').forEach(cb => cb.checked = false);
+                updateCounter();
+            }
+        };
+
+        document.getElementById('btnExport').onclick = () => {
+            const cls = document.getElementById('classSelect').value;
+            if (!cls) return showToast("Pilih kelas!", "pink");
+            const date = document.getElementById('datePicker').value;
+            const rows = [["Nama Murid", "Status"]];
+            document.querySelectorAll('.student-check').forEach(cb => {
+                rows.push([cb.dataset.name, cb.checked ? "HANTAR" : "TIDAK"]);
+            });
+            const csv = "data:text/csv;charset=utf-8," + rows.map(e => e.join(",")).join("\n");
+            const link = document.createElement("a");
+            link.href = encodeURI(csv);
+            link.download = `WorkTrackX_${cls}_${date}.csv`;
+            link.click();
+        };
+
+        // Admin Logic
+        document.getElementById('adminBtn').onclick = () => document.getElementById('loginModal').classList.remove('hidden');
+        document.getElementById('closeModal').onclick = () => document.getElementById('loginModal').classList.add('hidden');
+        document.getElementById('confirmLogin').onclick = () => {
+            if(document.getElementById('adminPass').value === 'mea2100') {
+                document.getElementById('loginModal').classList.add('hidden');
+                document.getElementById('guruMode').classList.add('hidden');
+                document.getElementById('adminMode').classList.remove('hidden');
+                computeAdminStats();
+            } else {
+                alert("Kata laluan salah!");
+            }
+        };
+        document.getElementById('backToGuru').onclick = () => {
+            document.getElementById('adminMode').classList.add('hidden');
+            document.getElementById('guruMode').classList.remove('hidden');
+        };
+
+        document.getElementById('adminClassSelect').onchange = computeAdminStats;
+        document.getElementById('btnBackup').onclick = exportBackup;
+        document.getElementById('btnRestore').onclick = () => document.getElementById('restoreFile').click();
+        
+        document.getElementById('restoreFile').onchange = (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                try {
+                    const restored = JSON.parse(event.target.result);
+                    if(confirm("Data baru akan digabungkan. Teruskan?")) {
+                        masterData = { ...masterData, ...restored };
+                        localStorage.setItem(STORAGE_KEY, JSON.stringify(masterData));
+                        showToast("Data Berjaya Digabungkan!", "cyan");
+                        renderStudentList();
+                    }
+                } catch (err) { alert("Fail tidak sah!"); }
+            };
+            reader.readAsText(file);
+        };
+    </script>
+</body>
+</html>
